@@ -1,0 +1,31 @@
+### Ý tưởng mới: Phân tích Cảm xúc cho một Video cụ thể
+
+**Tóm tắt:**
+Thay vì phân tích một chủ đề chung chung, ứng dụng sẽ tập trung vào việc phân tích một video cụ thể do người dùng cung cấp qua URL. Mục tiêu là cung cấp một "báo cáo cảm xúc" chi tiết, so sánh nội dung của video với phản ứng của cộng đồng thông qua các bình luận.
+
+**Luồng hoạt động:**
+
+1.  **Đầu vào:** Người dùng dán một URL của một video từ một nền tảng được hỗ trợ (ví dụ: TikTok, YouTube) vào một ô nhập liệu duy nhất.
+
+2.  **Phân tích Nội dung Video (Thách thức chính):**
+    *   Sử dụng AI để "xem" và hiểu nội dung chính của video.
+    *   Điều này có thể bao gồm:
+        *   **Speech-to-Text:** Chuyển đổi lời nói trong video thành văn bản.
+        *   **Phân tích Hình ảnh/Khung hình:** Xác định các đối tượng, cảnh, hoặc hành động chính.
+        *   **Tóm tắt:** Từ dữ liệu trên, tạo ra một bản tóm tắt ngắn gọn về nội dung và thông điệp của video.
+
+3.  **Thu thập Bình luận:**
+    *   Sử dụng URL đã cho để thu thập một lượng lớn các bình luận dưới video đó.
+
+4.  **Phân tích Cảm xúc Bình luận:**
+    *   Sử dụng một mô hình AI (như các mô hình từ Hugging Face) để phân tích cảm xúc (tích cực, tiêu cực, trung lập) của từng bình luận.
+
+5.  **Tạo Insight và Trình bày:**
+    *   Hiển thị một báo cáo tổng hợp cho người dùng, bao gồm:
+        *   **Tóm tắt nội dung video:** "Video này nói về..."
+        *   **Phân tích cảm xúc chung:** Biểu đồ tròn hiển thị tỷ lệ % tích cực/tiêu cực/trung lập của các bình luận.
+        *   **So sánh và Kết luận:** Đưa ra một nhận định, ví dụ: "Nội dung video mang tính tích cực, và cộng đồng đang phản ứng rất đồng tình (80% bình luận tích cực)." hoặc "Video này gây tranh cãi, với 45% bình luận tiêu cực chỉ trích thông điệp..."
+        *   **Các chủ đề chính trong bình luận:** Một word cloud hoặc danh sách các từ khóa được nhắc đến nhiều nhất trong các bình luận.
+
+**Điểm độc đáo:**
+Cung cấp một công cụ dễ tiếp cận cho người dùng cá nhân để trả lời câu hỏi: "Mọi người thực sự nghĩ gì về nội dung của video này?" - một khả năng thường chỉ dành cho các doanh nghiệp lớn hoặc chính các nền tảng mạng xã hội.

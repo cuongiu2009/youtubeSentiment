@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YouTube Sentiment Analysis</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>YouTube Sentiment Analysis</h1>
+        <div class="input-group">
+            <input type="text" id="youtube-url" placeholder="Enter YouTube Video URL">
+            <select id="comment-limit">
+                <option value="100">100 comments</option>
+                <option value="500">500 comments</option>
+                <option value="1000">1000 comments</option>
+            </select>
+            <button id="analyze-btn">Analyze</button>
+        </div>
+        <div id="results" class="results-area">
+            <!-- Results will be displayed here -->
+        </div>
+    </div>
+    <script src="app.js"></script>
+</body>
+</html>
