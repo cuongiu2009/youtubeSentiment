@@ -6,12 +6,12 @@ This task list is broken down into phases. Tasks marked with `[P]` can be worked
 
 ## Phase 1: Setup
 
-- [ ] **T001**: Create the project directory structure (`backend/` and `frontend/`).
-- [ ] **T002**: Initialize the backend Python project with a `pyproject.toml` file. Include `fastapi`, `uvicorn`, `google-api-python-client`, `transformers`, `torch`, and a library for `Whisper`.
-- [ ] **T003**: Initialize the frontend project with `npm init -y` and install basic dependencies for a vanilla JS/HTML setup.
-- [ ] **T004**: [P] Configure `ruff` for linting the backend Python code.
-- [ ] **T005**: [P] Configure `eslint` and `prettier` for the frontend JavaScript code.
-- [ ] **T005b**: Add `pytube` and `openai-whisper` to the backend dependencies in `pyproject.toml`.
+- [x] **T001**: Create the project directory structure (`backend/` and `frontend/`).
+- [x] **T002**: Initialize the backend Python project with a `pyproject.toml` file. Include `fastapi`, `uvicorn`, `google-api-python-client`, `transformers`, `torch`, `pytube`, and `openai-whisper`.
+    - **Lưu ý GPU**: Nếu hệ thống có GPU NVIDIA, cần cài đặt phiên bản PyTorch (`torch`) với CUDA support để tăng tốc độ xử lý. Lệnh cài đặt phải được lấy từ trang web chính thức của PyTorch để đảm bảo tương thích.
+- [x] **T003**: Initialize the frontend project with `npm init -y` and install basic dependencies for a vanilla JS/HTML setup.
+- [x] **T004**: [P] Configure `ruff` for linting the backend Python code.
+- [x] **T005**: [P] Configure `eslint` and `prettier` for the frontend JavaScript code.
 
 ## Phase 2: Backend Development (Tests First)
 

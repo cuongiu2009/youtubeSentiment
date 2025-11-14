@@ -1,0 +1,20 @@
+# -----------------------------------------------------------------------------
+# IMPORTANT NOTE FOR NVIDIA GPU USERS:
+# The 'torch' package listed below is the CPU-only version.
+# To leverage the GPU, you MUST install PyTorch with CUDA support manually.
+# Please visit https://pytorch.org/get-started/locally/ to get the correct
+# installation command and run it BEFORE you run 'pip install -r requirements.txt'.
+# -----------------------------------------------------------------------------
+
+# Core AI Libraries
+torch
+transformers
+openai-whisper
+pytube
+
+# Web Framework
+fastapi
+uvicorn[standard]
+
+# Google API Client
+google-api-python-client

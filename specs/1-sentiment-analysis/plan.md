@@ -19,6 +19,9 @@ The primary goal is to build a web application that accepts a YouTube URL, fetch
 **Project Type**: Web Application
 **Performance Goals**: Process requests within a reasonable time, with clear feedback to the user during long operations.
 
+## Design Decisions
+- **Lazy Loading for AI Models**: To conserve GPU memory and resources, heavyweight AI models (like Whisper) are loaded on-demand ("lazy loading") rather than at application startup. The model is only loaded into memory the first time it is explicitly required by a request.
+
 ## Constitution Check
 *GATE: Must pass before Phase 0 research.*
 

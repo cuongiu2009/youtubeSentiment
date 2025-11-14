@@ -1,0 +1,10 @@
+[tool.ruff]
+# Enable a broad set of rules by default
+select = ["E", "F", "W", "I", "N", "D"]
+
+# Never enforce `E501` (line length violations).
+ignore = ["E501"]
+
+[tool.ruff.lint.per-file-ignores]
+# Allow unused imports in `__init__.py` files
+"__init__.py" = ["F401"]

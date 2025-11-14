@@ -1,9 +1,9 @@
-# Ignore environment files
+# Environment variables
 .env
+
+# Python virtual environment
+/backend/venv/
 
 # Python cache
 __pycache__/
 *.pyc
-
-# Poetry
-.venv

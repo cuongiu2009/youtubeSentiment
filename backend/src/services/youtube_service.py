@@ -1,104 +1,104 @@
-import requests
-import re
 import os
-import yt_dlp
-from typing import List, Dict, Optional
+from googleapiclient.discovery import build
+from dotenv import load_dotenv
 
-class YouTubeService:
-    def __init__(self, api_key: str):
-        self.api_key = api_key
-        self.base_url = "https://www.googleapis.com/youtube/v3"
+# Load environment variables from .env file
+load_dotenv(dotenv_path=os.path.join(os.path.dirname(__file__), '..', '..', '.env'))
 
-    def _parse_srt(self, srt_content: str) -> str:
-        """A simple function to parse SRT content and extract plain text."""
-        lines = srt_content.strip().split('\n')
-        text_lines = [line for line in lines if not (line.isdigit() or '-->' in line or line == '')]
-        return ' '.join(text_lines)
+# --- Constants ---
+YOUTUBE_API_KEY = os.getenv("YOUTUBE_API_KEY")
+if not YOUTUBE_API_KEY:
+    print("WARNING: YOUTUBE_API_KEY not found in .env file.")
+    # You might want to raise an exception here in a real application
+    # raise ValueError("YOUTUBE_API_KEY not found.")
 
-    def get_transcript(self, video_id: str) -> Optional[str]:
-        """Fetches the transcript for a video if available."""
-        # This API often requires OAuth and fails with simple API keys. 
-        # We will rely on the yt-dlp fallback.
+YOUTUBE_API_SERVICE_NAME = "youtube"
+YOUTUBE_API_VERSION = "v3"
+
+def get_video_details(video_id: str) -> dict:
+    """
+    Fetches details for a given YouTube video ID using the YouTube Data API v3.
+
+    Args:
+        video_id: The ID of the YouTube video.
+
+    Returns:
+        A dictionary containing video details (e.g., title, description).
+        Returns None if the video is not found or an error occurs.
+    """
+    if not YOUTUBE_API_KEY:
+        print("Cannot fetch video details without an API key.")
         return None
 
-    def download_audio(self, video_id: str) -> Optional[str]:
-        """Downloads and converts audio to mp3 using yt-dlp and a specified FFmpeg path."""
-        try:
-            url = f"https://www.youtube.com/watch?v={video_id}"
-            backend_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-            temp_dir = os.path.join(backend_dir, 'temp')
-            os.makedirs(temp_dir, exist_ok=True)
-            
-            output_template = os.path.join(temp_dir, f'{video_id}.mp3')
-            # Correct, absolute path to the ffmpeg executable
-            ffmpeg_executable = r"C:\ffmpeg\bin\ffmpeg.exe"
-            # Correct, absolute path to the cookies file
-            cookies_path = r"C:\Users\Lenovo\Desktop\Code\Python\youtubeSentiment\backend\src\api\cookies.txt"
+    try:
+        youtube = build(
+            YOUTUBE_API_SERVICE_NAME,
+            YOUTUBE_API_VERSION,
+            developerKey=YOUTUBE_API_KEY
+        )
 
-            ydl_opts = {
-                'format': 'bestaudio/best',
-                'postprocessors': [{
-                    'key': 'FFmpegExtractAudio',
-                    'preferredcodec': 'mp3',
-                    'preferredquality': '192',
-                }],
-                'ffmpeg_location': ffmpeg_executable,
-                'outtmpl': os.path.join(temp_dir, f'{video_id}'),
-                'cookiefile': cookies_path,
-                'quiet': True,
-                'no_warnings': True,
-            }
+        request = youtube.videos().list(
+            part="snippet",
+            id=video_id
+        )
+        response = request.execute()
 
-            if os.path.exists(output_template):
-                os.remove(output_template)
-
-            with yt_dlp.YoutubeDL(ydl_opts) as ydl:
-                ydl.download([url])
-            
-            if os.path.exists(output_template):
-                return output_template
-            else:
-                print(f"ERROR: yt-dlp (library) ran but the output file was not found at {output_template}")
-                return None
-
-        except Exception as e:
-            print(f"An unexpected error occurred during audio download with yt-dlp library: {e}")
+        if not response.get("items"):
+            print(f"Video with ID '{video_id}' not found.")
             return None
 
-    def get_video_details(self, video_id: str) -> Dict:
-        """Fetches video details from YouTube API."""
-        params = {'part': 'snippet', 'id': video_id, 'key': self.api_key}
-        response = requests.get(f'{self.base_url}/videos', params=params)
-        response.raise_for_status()
-        data = response.json()
-        if not data.get("items"): raise Exception("Video not found")
-        item = data["items"][0]["snippet"]
-        return {"title": item["title"], "description": item["description"]}
+        return response["items"][0]["snippet"]
 
-    def get_video_comments(self, video_id: str, max_results: int) -> List[str]:
-        """Fetches comments for a video."""
+    except Exception as e:
+        print(f"An error occurred while fetching video details: {e}")
+        return None
+
+def get_video_comments(video_id: str, limit: int = 100) -> list[str]:
+    """
+    Fetches top-level comments for a given YouTube video ID.
+
+    Args:
+        video_id: The ID of the YouTube video.
+        limit: The maximum number of comments to fetch.
+
+    Returns:
+        A list of comment texts.
+    """
+    if not YOUTUBE_API_KEY:
+        print("Cannot fetch comments without an API key.")
+        return []
+
+    try:
+        youtube = build(
+            YOUTUBE_API_SERVICE_NAME,
+            YOUTUBE_API_VERSION,
+            developerKey=YOUTUBE_API_KEY
+        )
+
         comments = []
         next_page_token = None
-        try:
-            while len(comments) < max_results:
-                params = {
-                    'part': 'snippet',
-                    'videoId': video_id,
-                    'maxResults': min(max_results - len(comments), 100),
-                    'textFormat': 'plainText',
-                    'key': self.api_key,
-                    'pageToken': next_page_token
-                }
-                response = requests.get(f'{self.base_url}/commentThreads', params=params)
-                response.raise_for_status()
-                data = response.json()
 
-                for item in data['items']:
-                    comments.append(item['snippet']['topLevelComment']['snippet']['textDisplay'])
-                
-                next_page_token = data.get('nextPageToken')
-                if not next_page_token: break
-            return comments
-        except requests.exceptions.HTTPError as e:
-            if "commentsDisabled" in e.response.text: raise Exception("Comments are disabled for this video.")
-            raise e
+        while len(comments) < limit:
+            request = youtube.commentThreads().list(
+                part="snippet",
+                videoId=video_id,
+                maxResults=min(100, limit - len(comments)), # Fetch 100 or remaining
+                pageToken=next_page_token,
+                textFormat="plainText"
+            )
+            response = request.execute()
+
+            for item in response["items"]:
+                comment = item["snippet"]["topLevelComment"]["snippet"]["textDisplay"]
+                comments.append(comment)
+
+            next_page_token = response.get("nextPageToken")
+            if not next_page_token:
+                break # No more pages
+
+        print(f"Successfully fetched {len(comments)} comments.")
+        return comments[:limit] # Ensure we don't exceed the limit
+
+    except Exception as e:
+        print(f"An error occurred while fetching comments: {e}")
+        return []
